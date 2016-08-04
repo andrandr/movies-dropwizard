@@ -4,6 +4,7 @@ import com.example.api.AccessTokenData;
 import com.example.api.RegistrationData;
 import com.example.core.users.IUserService;
 import com.example.core.users.User;
+import com.example.core.users.WrongPasswordException;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import static com.example.resources.Headers.ACCESS_TOKEN;
 import static com.example.core.users.UserBuilder.userBuilder;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +31,7 @@ public class UsersResourceTest {
     public final ResourceTestRule resources = ResourceTestRule.builder()
             .addResource(new UsersResource(service))
             .addProvider(new UserNotFoundExceptionMapper())
+            .addProvider(new WrongPasswordExceptionMapper())
             .build();
 
 
@@ -54,6 +57,24 @@ public class UsersResourceTest {
         // then
         verify(service).register("login", "password");
         assertThat(response.getAccessToken()).isEqualTo("accessToken");
+    }
+
+    @Test
+    public void registerExistingUserWithWrongPassword() throws Exception {
+        // given
+        given(service.register("login", "password")).willThrow(new WrongPasswordException());
+        RegistrationData registrationData = new RegistrationData("login", "password");
+        Entity<RegistrationData> entity = entity(registrationData, APPLICATION_JSON_TYPE);
+
+        // when
+        Response response = resources.client()
+                .target("/users")
+                .request(APPLICATION_JSON_TYPE)
+                .post(entity);
+
+        // then
+        verify(service).register("login", "password");
+        assertThat(response.getStatus()).isEqualTo(FORBIDDEN.getStatusCode());
     }
 
     @Test
