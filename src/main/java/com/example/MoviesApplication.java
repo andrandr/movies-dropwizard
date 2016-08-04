@@ -11,6 +11,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.ext.Provider;
 import java.util.Map;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -45,7 +47,31 @@ public class MoviesApplication extends Application<MoviesConfiguration> {
         springApplication.setWebEnvironment(false);
         springApplication.setBannerMode(Banner.Mode.OFF);
         ConfigurableApplicationContext context = springApplication.run();
+        registerResources(environment, context);
         registerHealthChecks(environment, context);
+        registerProviders(environment, context);
+    }
+
+    private void registerResources(Environment environment, ApplicationContext context) {
+        Map<String, Object> resourceBeans = context.getBeansWithAnnotation(Path.class);
+        for (Map.Entry<String, Object> bean : resourceBeans.entrySet()) {
+            String name = bean.getKey();
+            Object instance = bean.getValue();
+            String className = instance.getClass().getName();
+            environment.jersey().register(instance);
+            log.info("registered resource bean {} of class {}", name, className);
+        }
+    }
+
+    private void registerProviders(Environment environment, ApplicationContext context) {
+        Map<String, Object> providerBeans = context.getBeansWithAnnotation(Provider.class);
+        for (Map.Entry<String, Object> bean : providerBeans.entrySet()) {
+            String name = bean.getKey();
+            Object instance = bean.getValue();
+            String className = instance.getClass().getSimpleName();
+            environment.jersey().register(instance);
+            log.info("registered provider bean {} of class {}", name, className);
+        }
     }
 
     private void registerHealthChecks(Environment environment, ApplicationContext context) {
