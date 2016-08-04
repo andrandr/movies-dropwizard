@@ -4,6 +4,7 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
+import org.springframework.boot.SpringApplication;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -29,5 +30,6 @@ public class MoviesApplication extends Application<MoviesConfiguration> {
     public void run(
             final MoviesConfiguration configuration,
             final Environment environment) {
+        SpringApplication.run(SpringConfiguration.class);
     }
 }
