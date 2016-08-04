@@ -59,7 +59,7 @@ public class MoviesApplication extends Application<MoviesConfiguration> {
             Object instance = bean.getValue();
             String className = instance.getClass().getName();
             environment.jersey().register(instance);
-            log.info("registered resource bean {} of class {}", name, className);
+            log.info("registered resource bean '{}' of class {}", name, className);
         }
     }
 
@@ -70,7 +70,7 @@ public class MoviesApplication extends Application<MoviesConfiguration> {
             Object instance = bean.getValue();
             String className = instance.getClass().getSimpleName();
             environment.jersey().register(instance);
-            log.info("registered provider bean {} of class {}", name, className);
+            log.info("registered provider bean '{}' of class {}", name, className);
         }
     }
 
