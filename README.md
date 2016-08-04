@@ -18,7 +18,7 @@ It will start a local HTTP server listening on port `8080`, equipped with a H2 d
 ## Endpoints
 The application exposes serveral REST endpoints for manipulating users and their movies. All of them expect data in JSON format and return JSON as output.
 
-Every endpoint, except `POST /users`, expects an access token which must be passed as an HTTP header with name `X-Auth-Token`. This access token must be obtained via a call to `POST /users` (see below). Passing illegal access token causes an HTTP error `404 Not found`.
+Every endpoint, except `POST /users` and `GET /status`, expects an access token which must be passed as an HTTP header with name `X-Auth-Token`. This access token must be obtained via a call to `POST /users` (see below). Passing illegal access token causes an HTTP error `404 Not found`.
 
 ### Users
 
@@ -38,3 +38,8 @@ Calling this endpoint with an unknown access token causes an HTTP error `404 Not
 ### Movies
 
 ### Health
+
+#### Application status: `GET /status`
+Input: none  
+Output: `{"status":"ok"}`  
+This endpoint acts as a mean of checking if the application is up and running.
