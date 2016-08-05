@@ -25,7 +25,7 @@ Every endpoint, except `POST /users` and `GET /status`, expects an access token 
 #### Registering user account: `POST /users`
 Input: `{"login":"user login", "password":"user password"}`  
 Output: `{"accessToken":"access token"}`  
-This endpoint causes the specified user credentials to be registered in the user database. It returns an access token associated with that user, which must be later passed to all other endpoints in a header named `X-Auth-Token`.  
+This endpoint causes the specified user credentials to be registered in the user database. It returns an access token associated with that user, which must be later passed to all other user- and movie-related endpoints in a header named `X-Auth-Token`.  
 Calling this endpoint with the same data causes the same access token to be returned.  
 Calling this endpoint with login of an existing user but wrong password causes an HTTP error `403 Forbidden`.
 
@@ -36,6 +36,31 @@ This endpoint deletes user account associated with the specified access token. A
 Calling this endpoint with an unknown access token causes an HTTP error `404 Not found`.
 
 ### Movies
+
+#### Getting list of user movies: `GET /movies`
+Input: none  
+Output: list of movie data: `{"id":"movie id", "title":"movie title", "description":"movie description", "watched":true|false}`  
+This endpoint returns all movies previously added by the user associated with the specified access token.  
+Calling this endpoint with an unknown access token causes an HTTP error `404 Not found`.
+
+#### Filtering user movies by watched flag: `GET /movies?watched=true|false`
+This endpoint returns a list of user's watched movies (in case of `watched=true`) or not watched movies (in case of `watched=false`).
+
+#### Adding user movie: `POST /movies`
+Input: `{"title":"movie title", "description":"movie description", "watched":true|false}`  
+Output: `{"id":"movie id", "title":"movie title", "description":"movie description", "watched":true|false}`
+
+#### Editing user movie: `PUT /movies/{movieId}`
+Input: `{"id":"movie id", "title":"movie title", "description":"movie description", "watched":true|false}`  
+Output: `{"id":"movie id", "title":"movie title", "description":"movie description", "watched":true|false}`  
+This endpoint updates the information about the movie with the specified ID.  
+Calling this endpoint with ID of an unknown movie causes an HTTP error `404 Not found`.
+
+#### Deleting user movie: `DELETE /movies/{movieId}`
+Input: none  
+Output: none  
+This endpoint deletes movie with the specified ID.  
+Calling this endpoint with ID of an unknown movie causes an HTTP error `404 Not found`.
 
 ### Health
 
