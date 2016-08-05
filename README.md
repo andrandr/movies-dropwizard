@@ -15,6 +15,13 @@ $ java -jar target/movies-dropwizard-0.1.0.jar server config.yml
 ```
 It will start a local HTTP server listening on port `8080`, equipped with a H2 database. This is an in-memory database so all data stored in it will be lost once the application is shut down. As such, it is a good choice if you want to just play with available REST endpoints without rolling your own database.
 
+However, you can also run the application with your own PostgreSQL database. To do that, simply edit `src/main/resources/application-postgres.properties` and modify the three properties named `datasource.url`, `datasource.username`, `datasource.password`. Then, issue the following command in the terminal:
+```
+$ mvn clean install
+$ java -Dspring.profiles.active=postgres -jar target/movies-dropwizard-0.1.0.jar server config.yml
+```
+This will start the HTTP server listening on port `8080` and connect the application to the specified database. All needed database objects will be automatically created.
+
 ## Endpoints
 The application exposes serveral REST endpoints for manipulating users and their movies. All of them expect data in JSON format and return JSON as output.
 
